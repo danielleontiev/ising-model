@@ -56,25 +56,25 @@ class IsingModel:
 class Plotter:
 
     def __init__(self, iterations_number, lattice_size, sum_threshold, t_0, t_1, step, draw_spins) -> None:
-        self.iterations_number = iterations_number
-        self.lattice_size = lattice_size
-        self.sum_threshold = sum_threshold
-        self.t_0 = t_0
-        self.t_1 = t_1
-        self.step = step
-        self.draw_spins = draw_spins
+        self._iterations_number = iterations_number
+        self._lattice_size = lattice_size
+        self._sum_threshold = sum_threshold
+        self._t_0 = t_0
+        self._t_1 = t_1
+        self._step = step
+        self._draw_spins = draw_spins
 
     def run(self):
-        t = self.t_0
+        t = self._t_0
         x = []
         y = []
-        for _ in range(int((self.t_1 - self.t_0) / self.step) + 1):
-            im = IsingModel(self.lattice_size, self.sum_threshold, 1, t)
-            for k in range(self.iterations_number):
+        for _ in range(int((self._t_1 - self._t_0) / self._step) + 1):
+            im = IsingModel(self._lattice_size, self._sum_threshold, 1, t)
+            for k in range(self._iterations_number):
                 im.mc_step()
-                if self.draw_spins:
+                if self._draw_spins:
                     im.plot_state(1000)
-            t += self.step
+            t += self._step
             x.append(t)
             y.append(im.average_energy)
         plot.plot(x, y)
