@@ -1,6 +1,7 @@
 import random
 import math
-from itertools import cycle
+from itertools import cycle, product
+
 import matplotlib.pyplot as plot
 
 
@@ -14,7 +15,7 @@ class IsingModel:
         self.sum_energy = 0
         self.step = 0
         self.sum_threshold = sum_threshold
-        self.lattice_iterator = cycle(((i, j for i in range(linear_size)) for j in range(linear_size)))
+        self.lattice_iterator = cycle(product(range(linear_size), range(linear_size)))
         self.figure = None
         self.matrix = None
         self.plot_initialized = False
@@ -28,13 +29,12 @@ class IsingModel:
 
     def mc_step(self):
         self.step += 1
-        for i in range(self.linear_size):
-            for j in range(self.linear_size):
-                d_e = 2 * self.exchange_interaction * self.spins[i][j] * self._neighbour_spins_sum(i, j)
-                if d_e <= 0 or random.random() <= math.exp(-d_e / self.temperature):
-                    self.spins[i][j] *= -1
-                    if self.step > self.sum_threshold:
-                        self.sum_energy += d_e
+        i, j = next(self.lattice_iterator)
+        d_e = 2 * self.exchange_interaction * self.spins[i][j] * self._neighbour_spins_sum(i, j)
+        if d_e <= 0 or random.random() <= math.exp(-d_e / self.temperature):
+            self.spins[i][j] *= -1
+            if self.step > self.sum_threshold:
+                self.sum_energy += d_e
 
     def _initialize_plot(self):
         plot.ion()
@@ -51,11 +51,11 @@ class IsingModel:
             self.figure.canvas.draw()
 
 
-im = IsingModel(100, 50, 1, 0.1)
+im = IsingModel(100, 100000, 1, 0.1)
 n = 10 ** 5
 for t in range(4, 18, 1):
     tt = t / 4
     im.temperature = tt
-    for k in range(100):
+    for k in range(1000000):
         im.mc_step()
     print(tt, im.sum_energy)
