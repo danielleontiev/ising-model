@@ -81,4 +81,5 @@ class Plotter:
         plot.show()
 
 
-Plotter(100000, 100, 0, 0.1, 5, 0.05, False).run()
+Plotter(iterations_number=100000, lattice_size=100, sum_threshold=0, t_0=0.1, t_1=5, step=0.05,
+		draw_spins=False).run()
