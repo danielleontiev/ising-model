@@ -10,11 +10,11 @@ Calculate internal energy of Ising model using Metropolis Monte-Carlo algorithm.
 ## Usage:
 
     Plotter(iterations_number=100000,
-		    lattice_size=100,
-		    sum_threshold=0,
-		    t_0=0.1, t_1=5,
-		    step=0.05,
-		    draw_spins=False).run()
+            lattice_size=100,
+            sum_threshold=0,
+            t_0=0.1, t_1=5,
+            step=0.05,
+            draw_spins=False).run()
 
 
 1) `iterations_number` - number of Monte-Carlo throws
