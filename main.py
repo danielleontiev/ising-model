@@ -5,12 +5,14 @@ import matplotlib.pyplot as plot
 
 class IsingModel:
 
-    def __init__(self, linear_size, exchange_interaction, temperature) -> None:
+    def __init__(self, linear_size, sum_threshold, exchange_interaction, temperature) -> None:
         self.linear_size = linear_size
+        self.sum_threshold = sum_threshold
         self.step = 0
         self.temperature = temperature
         self.exchange_interaction = exchange_interaction
         self.spins = [[random.choice((1, -1)) for _ in range(linear_size)] for _ in range(linear_size)]
+        self.sum_energy = 0
         self.figure = None
         self.matrix = None
         self.plot_initialized = False
@@ -22,14 +24,6 @@ class IsingModel:
         right = j + 1 if j < self.linear_size - 1 else 0
         return self.spins[i][left] + self.spins[i][right] + self.spins[up][j] + self.spins[down][j]
 
-    # @property
-    # def full_energy(self):
-    #     full_energy = 0
-    #     for i in range(self.linear_size):
-    #         for j in range(self.linear_size):
-    #             full_energy += -self.exchange_interaction * self.spins[i][j] * self._neighbour_spins_sum(i, j)
-    #     return full_energy / 4
-
     def mc_step(self):
         self.step += 1
         i = random.randrange(self.linear_size)
@@ -37,6 +31,8 @@ class IsingModel:
         d_e = 2 * self.exchange_interaction * self.spins[i][j] * self._neighbour_spins_sum(i, j)
         if d_e <= 0 or random.random() <= math.exp(-d_e / self.temperature):
             self.spins[i][j] *= -1
+            if self.step > self.sum_threshold:
+                self.sum_energy += d_e
 
     def _initialize_plot(self):
         plot.ion()
@@ -52,9 +48,21 @@ class IsingModel:
             self.matrix.set_data(self.spins)
             self.figure.canvas.draw()
 
+    @property
+    def average_energy(self):
+        return self.sum_energy / (self.step - self.sum_threshold)
 
-im = IsingModel(100, 1, 0.1)
+
 n = 10 ** 5
-for k in range(100000):
-    im.mc_step()
-    im.plot_state(1000)
+size = 100
+n0 = 0
+t = 0
+step = 0.05
+m = 200
+for _ in range(m):
+    t += step
+    im = IsingModel(size, n0, 1, t)
+    for k in range(n):
+        im.mc_step()
+        # im.plot_state(1000)
+    print(t, im.average_energy)
